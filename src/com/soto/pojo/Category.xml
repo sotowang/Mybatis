@@ -2,38 +2,24 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
-
-<!--这条sql语句用id: listCategory 进行标示以供后续代码调用。
-resultType="Category" 表示返回的数据和Category关联起来，
-这里本应该使用的是 com.how2java.pojo.Category,
-但是因为上一步配置了别名，所以直接使用Category就行了-->
 <mapper namespace="com.soto.pojo">
-    <insert id="addCategory" parameterType="Category">
-            insert into category_ ( name ) values (#{name})
-    </insert>
+    <resultMap type="Category" id="categoryBean">
+        <id column="cid" property="id" />
+        <result column="cname" property="name" />
 
-    <delete id="deleteCategory" parameterType="Category">
-            delete from category_ where id= #{id}
-    </delete>
+        <!-- 一对多的关系 -->
+        <!-- property: 指的是集合属性的值, ofType：指的是集合中元素的类型 -->
+        <collection property="products" ofType="Product">
+            <id column="pid" property="id" />
+            <result column="pname" property="name" />
+            <result column="price" property="price" />
+        </collection>
+    </resultMap>
 
-    <select id="getCategory" parameterType="_int" resultType="Category">
-            select * from   category_  where id= #{id}
-     </select>
-
-    <update id="updateCategory" parameterType="Category">
-            update category_ set name=#{name} where id=#{id}
-    </update>
-
-    <select id="listCategory" resultType="Category">
-	        select * from   category_
-	</select>
-
-    <select id="listCategoryByName" parameterType="string" resultType="Category">
-            select * from   category_  where name like concat('%',#{0},'%')
+    <!-- 关联查询分类和产品表 -->
+    <select id="listCategory" resultMap="categoryBean">
+        select c.*, p.*, c.id 'cid', p.id 'pid', c.name 'cname', p.name 'pname' from category_ c left join product_ p on c.id = p.cid
     </select>
 
-    <select id="listCategoryByIdAndName"  parameterType="map" resultType="Category">
-             select * from   category_  where id> #{id}  and name like concat('%',#{name},'%')
-    </select>
+
 </mapper>

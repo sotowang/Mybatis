@@ -1,6 +1,7 @@
 package com.soto.test;
 
 import com.soto.pojo.Category;
+import com.soto.pojo.Product;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -46,16 +47,21 @@ public class TestMybatis {
 //        List<Category> cs = session.selectList("listCategoryByName","cat");
 
         //多条件查询
-        Map<String,Object> params = new HashMap<>();
-        params.put("id", 3);
-        params.put("name", "cat");
-
-        List<Category> cs = session.selectList("listCategoryByIdAndName",params);
-
+//        Map<String,Object> params = new HashMap<>();
+//        params.put("id", 3);
+//        params.put("name", "cat");
+//        List<Category> cs = session.selectList("listCategoryByIdAndName",params);
+//        for (Category c : cs) {
+//            System.out.println(c.getName());
+//        }
+        List<Category> cs = session.selectList("listCategory");
         for (Category c : cs) {
-            System.out.println(c.getName());
+            System.out.println(c);
+            List<Product> ps = c.getProducts();
+            for (Product p : ps) {
+                System.out.println("\t"+p);
+            }
         }
-
         session.commit();
         session.close();
 
