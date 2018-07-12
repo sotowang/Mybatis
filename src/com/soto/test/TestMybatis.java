@@ -8,7 +8,9 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TestMybatis {
     public static void main(String[] args) throws IOException {
@@ -39,7 +41,20 @@ public class TestMybatis {
 //        session.update("updateCategory",c);
 
         //查询所有
-        listAll(session);
+//        listAll(session);
+        //模糊查询
+//        List<Category> cs = session.selectList("listCategoryByName","cat");
+
+        //多条件查询
+        Map<String,Object> params = new HashMap<>();
+        params.put("id", 3);
+        params.put("name", "cat");
+
+        List<Category> cs = session.selectList("listCategoryByIdAndName",params);
+
+        for (Category c : cs) {
+            System.out.println(c.getName());
+        }
 
         session.commit();
         session.close();

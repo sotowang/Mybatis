@@ -4,28 +4,36 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 
-        <!--这条sql语句用id: listCategory 进行标示以供后续代码调用。
-        resultType="Category" 表示返回的数据和Category关联起来，
-        这里本应该使用的是 com.how2java.pojo.Category,
-        但是因为上一步配置了别名，所以直接使用Category就行了-->
+<!--这条sql语句用id: listCategory 进行标示以供后续代码调用。
+resultType="Category" 表示返回的数据和Category关联起来，
+这里本应该使用的是 com.how2java.pojo.Category,
+但是因为上一步配置了别名，所以直接使用Category就行了-->
 <mapper namespace="com.soto.pojo">
-	<insert id="addCategory" parameterType="Category" >
+    <insert id="addCategory" parameterType="Category">
             insert into category_ ( name ) values (#{name})
-        </insert>
+    </insert>
 
-	<delete id="deleteCategory" parameterType="Category" >
+    <delete id="deleteCategory" parameterType="Category">
             delete from category_ where id= #{id}
-        </delete>
+    </delete>
 
-	<select id="getCategory" parameterType="_int" resultType="Category">
+    <select id="getCategory" parameterType="_int" resultType="Category">
             select * from   category_  where id= #{id}
-        </select>
+     </select>
 
-	<update id="updateCategory" parameterType="Category" >
+    <update id="updateCategory" parameterType="Category">
             update category_ set name=#{name} where id=#{id}
-        </update>
+    </update>
 
     <select id="listCategory" resultType="Category">
 	        select * from   category_
-	    </select>
+	</select>
+
+    <select id="listCategoryByName" parameterType="string" resultType="Category">
+            select * from   category_  where name like concat('%',#{0},'%')
+    </select>
+
+    <select id="listCategoryByIdAndName"  parameterType="map" resultType="Category">
+             select * from   category_  where id> #{id}  and name like concat('%',#{name},'%')
+    </select>
 </mapper>
