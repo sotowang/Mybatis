@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import com.soto.mapper.CategoryMapper;
+import com.soto.mapper.ProductMapper;
 import com.soto.pojo.Product;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
@@ -21,13 +22,17 @@ public class TestMybatis {
         InputStream inputStream = Resources.getResourceAsStream(resource);
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
         SqlSession session = sqlSessionFactory.openSession();
-        CategoryMapper mapper = session.getMapper(CategoryMapper.class);
+//        CategoryMapper mapper = session.getMapper(CategoryMapper.class);
 
 //        add(mapper);
 //        delete(mapper);
 //        get(mapper);
 //        update(mapper);
-        listAll(mapper);
+        ProductMapper mapper = session.getMapper(ProductMapper.class);
+        List<Product> ps= mapper.list();
+        for (Product p : ps) {
+            System.out.println(p + "\t对应的分类是:\t" + p.getCategory().getName());
+        }
 
         session.commit();
         session.close();
