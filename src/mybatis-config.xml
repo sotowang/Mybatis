@@ -19,8 +19,6 @@
     </environments>
     <mappers>
         <mapper resource="com/soto/pojo/Category.xml"/>
-        <mapper resource="com/soto/pojo/Product.xml"/>
-        <mapper resource="com/soto/pojo/Order.xml"/>
-        <mapper resource="com/soto/pojo/OrderItem.xml"/>
+        <mapper class="com.soto.mapper.CategoryMapper"/>
     </mappers>
 </configuration>
