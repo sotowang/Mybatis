@@ -54,14 +54,27 @@ public class TestMybatis {
 //        for (Category c : cs) {
 //            System.out.println(c.getName());
 //        }
-        List<Category> cs = session.selectList("listCategory");
-        for (Category c : cs) {
-            System.out.println(c);
-            List<Product> ps = c.getProducts();
-            for (Product p : ps) {
-                System.out.println("\t"+p);
-            }
+
+        //一对多
+//        List<Category> cs = session.selectList("listCategory");
+//        for (Category c : cs) {
+//            System.out.println(c);
+//            List<Product> ps = c.getProducts();
+//            for (Product p : ps) {
+//                System.out.println("\t"+p);
+//            }
+//        }
+
+        //多对一
+        List<Product> ps = session.selectList("listProduct");
+        for (Product p : ps) {
+            System.out.println(p+" 对应的分类是 \t "+ p.getCategory());
         }
+
+
+
+
+
         session.commit();
         session.close();
 
