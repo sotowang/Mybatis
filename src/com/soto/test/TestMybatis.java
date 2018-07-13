@@ -5,7 +5,10 @@ import java.io.InputStream;
 import java.util.List;
 
 import com.soto.mapper.CategoryMapper;
+import com.soto.mapper.OrderMapper;
 import com.soto.mapper.ProductMapper;
+import com.soto.pojo.Order;
+import com.soto.pojo.OrderItem;
 import com.soto.pojo.Product;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
@@ -28,11 +31,15 @@ public class TestMybatis {
 //        delete(mapper);
 //        get(mapper);
 //        update(mapper);
-        ProductMapper mapper = session.getMapper(ProductMapper.class);
-        List<Product> ps= mapper.list();
-        for (Product p : ps) {
-            System.out.println(p + "\t对应的分类是:\t" + p.getCategory().getName());
-        }
+//        ProductMapper mapper = session.getMapper(ProductMapper.class);
+//        List<Product> ps= mapper.list();
+//        for (Product p : ps) {
+//            System.out.println(p + "\t对应的分类是:\t" + p.getCategory().getName());
+//        }
+
+        listOrder(session);
+
+
 
         session.commit();
         session.close();
@@ -71,6 +78,21 @@ public class TestMybatis {
             for (Product p : ps) {
                 System.out.println("\t"+p.getName());
             }
+        }
+    }
+
+    private static void listOrder(SqlSession session) {
+        OrderMapper mapper =session.getMapper(OrderMapper.class);
+        List<Order> os = mapper.list();
+        for (Order o : os) {
+            System.out.println(o.getCode());
+            List<OrderItem> ois= o.getOrderItems();
+            if(null!=ois){
+                for (OrderItem oi : ois) {
+                    System.out.format("\t%s\t%f\t%d%n", oi.getProduct().getName(),oi.getProduct().getPrice(),oi.getNumber());
+                }
+            }
+
         }
     }
 }

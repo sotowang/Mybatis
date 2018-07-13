@@ -14,4 +14,7 @@ public interface ProductMapper {
             @Result(property="category",column="cid",one=@One(select="com.soto.mapper.CategoryMapper.get"))
     })
     public List<Product> list();
+
+    @Select("select * from product_ where id = #{id}")
+    public Product get(int id);
 }

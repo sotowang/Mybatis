@@ -18,8 +18,13 @@
         </environment>
     </environments>
     <mappers>
-        <mapper resource="com/soto/pojo/Category.xml"/>
+        <!--<mapper resource="com/soto/pojo/Category.xml"/>-->
+        <!--<mapper resource="com/soto/pojo/OrderItem.xml"/>-->
+        <!--<mapper resource="com/soto/pojo/Order.xml"/>-->
+        <!--<mapper resource="com/soto/pojo/Product.xml"/>-->
         <mapper class="com.soto.mapper.CategoryMapper"/>
         <mapper class="com.soto.mapper.ProductMapper"/>
+        <mapper class="com.soto.mapper.OrderItemMapper"/>
+        <mapper class="com.soto.mapper.OrderMapper"/>
     </mappers>
 </configuration>
