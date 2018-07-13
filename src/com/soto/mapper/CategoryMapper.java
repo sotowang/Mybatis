@@ -1,10 +1,7 @@
 package com.soto.mapper;
 
 import com.soto.pojo.Category;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -21,6 +18,11 @@ public interface CategoryMapper {
     @Update("update category_ set name=#{name} where id=#{id} ")
     public int update(Category category);
 
+
     @Select(" select * from category_ ")
+    @Results({
+            @Result(property = "id", column = "id"),
+            @Result(property = "products", javaType = List.class, column = "id", many = @Many(select = "com.soto.mapper.ProductMapper.listByCategory") )
+    })
     public List<Category> list();
 }

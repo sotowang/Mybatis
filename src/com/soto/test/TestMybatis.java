@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import com.soto.mapper.CategoryMapper;
+import com.soto.pojo.Product;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -61,6 +62,10 @@ public class TestMybatis {
         List<Category> cs = mapper.list();
         for (Category c : cs) {
             System.out.println(c.getName());
+            List<Product> ps = c.getProducts();
+            for (Product p : ps) {
+                System.out.println("\t"+p.getName());
+            }
         }
     }
 }

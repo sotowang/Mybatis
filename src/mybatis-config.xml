@@ -20,5 +20,6 @@
     <mappers>
         <mapper resource="com/soto/pojo/Category.xml"/>
         <mapper class="com.soto.mapper.CategoryMapper"/>
+        <mapper class="com.soto.mapper.ProductMapper"/>
     </mappers>
 </configuration>
