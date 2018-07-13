@@ -19,13 +19,24 @@ public class TestMybatis {
         InputStream inputStream = Resources.getResourceAsStream(resource);
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
         SqlSession session = sqlSessionFactory.openSession();
-        CategoryMapper mapper = session.getMapper(CategoryMapper.class);
 
+        CategoryMapper mapper = session.getMapper(CategoryMapper.class);
 //        add(mapper);
 //        delete(mapper);
 //        get(mapper);
 //        update(mapper);
-        listAll(mapper);
+
+//        List<Category> cs = mapper.list();
+//        for (Category c : cs) {
+//            mapper.delete(c.getId());
+//        }
+
+        List<Category>  cs =mapper.listByPage(0, 5);
+        for (Category c : cs) {
+            System.out.println(c);
+        }
+
+
 
         session.commit();
         session.close();
