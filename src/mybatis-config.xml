@@ -6,6 +6,9 @@
     <typeAliases>
         <package name="com.soto.pojo"/>
     </typeAliases>
+    <plugins>
+        <plugin interceptor="com.github.pagehelper.PageInterceptor"></plugin>
+    </plugins>
     <environments default="development">
         <environment id="development">
             <!--事务管理-->
@@ -19,10 +22,10 @@
         </environment>
     </environments>
     <mappers>
-        <!--<mapper resource="com/soto/pojo/Category.xml"/>-->
+        <mapper resource="com/soto/pojo/Category.xml"/>
         <!--<mapper resource="com/soto/pojo/OrderItem.xml"/>-->
         <!--<mapper resource="com/soto/pojo/Order.xml"/>-->
-        <!--<mapper resource="com/soto/pojo/Product.xml"/>-->
+        <mapper resource="com/soto/pojo/Product.xml"/>
         <mapper class="com.soto.mapper.CategoryMapper"/>
         <mapper class="com.soto.mapper.ProductMapper"/>
         <mapper class="com.soto.mapper.OrderItemMapper"/>

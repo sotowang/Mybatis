@@ -21,8 +21,8 @@
         </update>
     <select id="listCategory" resultType="Category">
         select * from   category_
-        <if test="start!=null and count!=null">
-            limit #{start},#{count}
-        </if>
+        <!--<if test="start!=null and count!=null">-->
+            <!--limit #{start},#{count}-->
+        <!--</if>-->
     </select>
 </mapper>

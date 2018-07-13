@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import com.github.pagehelper.PageHelper;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -20,22 +21,17 @@ public class TestMybatis {
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
         SqlSession session = sqlSessionFactory.openSession();
 
-        CategoryMapper mapper = session.getMapper(CategoryMapper.class);
+//        CategoryMapper mapper = session.getMapper(CategoryMapper.class);
 //        add(mapper);
 //        delete(mapper);
 //        get(mapper);
 //        update(mapper);
 
-//        List<Category> cs = mapper.list();
-//        for (Category c : cs) {
-//            mapper.delete(c.getId());
-//        }
-
-        List<Category>  cs =mapper.listByPage(0, 5);
+        PageHelper.offsetPage(0, 5);
+        List<Category> cs = session.selectList("listCategory");
         for (Category c : cs) {
-            System.out.println(c);
+            System.out.println(c.getName());
         }
-
 
 
         session.commit();
