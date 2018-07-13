@@ -20,5 +20,7 @@
     <mappers>
         <mapper resource="com/soto/pojo/Category.xml"/>
         <mapper resource="com/soto/pojo/Product.xml"/>
+        <mapper resource="com/soto/pojo/Order.xml"/>
+        <mapper resource="com/soto/pojo/OrderItem.xml"/>
     </mappers>
 </configuration>

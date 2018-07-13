@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.soto.pojo">
+    <resultMap type="Order" id="orderBean">
+        <id column="oid" property="id" />
+        <result column="code" property="code" />
+
+        <collection property="orderItems" ofType="OrderItem">
+            <id column="oiid" property="id" />
+            <result column="number" property="number" />
+            <association property="product" javaType="Product">
+                <id column="pid" property="id"/>
+                <result column="pname" property="name"/>
+                <result column="price" property="price"/>
+            </association>
+        </collection>
+    </resultMap>
+
+    <select id="listOrder" resultMap="orderBean">
+            select o.*,p.*,oi.*, o.id 'oid', p.id 'pid', oi.id 'oiid', p.name 'pname'
+                from order_ o
+                left join order_item_ oi    on o.id =oi.oid
+                left join product_ p on p.id = oi.pid
+    </select>
+
+    <select id="getOrder" resultMap="orderBean">
+            select o.*,p.*,oi.*, o.id 'oid', p.id 'pid', oi.id 'oiid', p.name 'pname'
+                from order_ o
+                left join order_item_ oi on o.id =oi.oid
+                left join product_ p on p.id = oi.pid
+            where o.id = #{id}
+    </select>
+</mapper>

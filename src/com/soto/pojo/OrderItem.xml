@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.soto.pojo">
+
+    <insert id="addOrderItem" parameterType="OrderItem">
+            insert into order_item_
+                values(null,#{order.id},#{product.id},#{number})
+    </insert>
+
+
+    <delete id="deleteOrderItem" parameterType="OrderItem">
+            delete from order_item_
+                where oid = #{order.id} and pid = #{product.id}
+    </delete>
+
+</mapper>

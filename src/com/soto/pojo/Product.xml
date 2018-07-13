@@ -19,5 +19,13 @@
     <!-- 根据id查询Product, 关联将Orders查询出来 -->
     <select id="listProduct" resultMap="productBean">
             select c.*, p.*, c.id 'cid', p.id 'pid', c.name 'cname', p.name 'pname' from category_ c left join product_ p on c.id = p.cid
-        </select>
+    </select>
+
+    <select id="getProduct" resultMap="productBean">
+            select c.*, p.*, c.id 'cid', p.id 'pid', c.name 'cname', p.name 'pname'
+                from category_ c
+                left join product_ p on c.id = p.cid
+            where p.id = #{id}
+    </select>
+
 </mapper>

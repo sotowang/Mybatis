@@ -1,6 +1,8 @@
 package com.soto.test;
 
 import com.soto.pojo.Category;
+import com.soto.pojo.Order;
+import com.soto.pojo.OrderItem;
 import com.soto.pojo.Product;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
@@ -66,10 +68,20 @@ public class TestMybatis {
 //        }
 
         //多对一
-        List<Product> ps = session.selectList("listProduct");
-        for (Product p : ps) {
-            System.out.println(p+" 对应的分类是 \t "+ p.getCategory());
-        }
+//        List<Product> ps = session.selectList("listProduct");
+//        for (Product p : ps) {
+//            System.out.println(p+" 对应的分类是 \t "+ p.getCategory());
+//        }
+
+        //建立关系
+//        addOrderItemItem(session);
+
+
+        //删除关系
+        deleteOrderItem(session);
+
+        //多对多
+        listOrder(session);
 
 
 
@@ -86,4 +98,37 @@ public class TestMybatis {
             System.out.println(c.getName());
         }
     }
+
+
+    private static void listOrder(SqlSession session) {
+        List<Order> os = session.selectList("listOrder");
+        for (Order o : os) {
+            System.out.println(o.getCode());
+            List<OrderItem> ois= o.getOrderItems();
+            for (OrderItem oi : ois) {
+                System.out.format("\t%s\t%f\t%d%n", oi.getProduct().getName(),oi.getProduct().getPrice(),oi.getNumber());
+            }
+        }
+    }
+
+    private static void addOrderItem(SqlSession session) {
+        Order o1 = session.selectOne("getOrder", 1);
+        Product p6 = session.selectOne("getProduct", 6);
+        OrderItem oi = new OrderItem();
+        oi.setProduct(p6);
+        oi.setOrder(o1);
+        oi.setNumber(200);
+
+        session.insert("addOrderItem", oi);
+    }
+
+    private static void deleteOrderItem(SqlSession session) {
+        Order o1 = session.selectOne("getOrder",1);
+        Product p6 = session.selectOne("getProduct",6);
+        OrderItem oi = new OrderItem();
+        oi.setProduct(p6);
+        oi.setOrder(o1);
+        session.delete("deleteOrderItem", oi);
+    }
+
 }
