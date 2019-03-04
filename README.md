@@ -223,9 +223,262 @@ public class Test1 {
 }
  ```
 
+ 
 
+**通过跟踪源代码可以看到SqlSession通过mapper映射的id来查找数据的方法；**
+
+org.apache.ibatis.session.defaults.DefaultSqlSession类
+
+```java
+public <E> List<E> selectList(String statement, Object parameter, RowBounds rowBounds){
+     try{
+	 	MappedStatement ms = configuration.getMappedStatement(statement);
+	 	List<E> result = executor.<E> query(ms, wrapCollection(parameter), rowBounds, Executor.NO_RESULT_HANDLER);
+	 	return result;
+     }catch (Exception e){
+		throw ExceptionFactory.wrapException("Error querying database.  Cause: " + e, e);
+     }
+     finally{
+		ErrorContext.instance().reset();  
+     }
+}
+```
+
+org.apache.ibatis.session.Configuration类
+
+```java
+public MappedStatement getMappedStatement(String id){
+	return this.getMappedStatement(id, true);
+}
+```
+
+```java
+protected final Map<String, MappedStatement> mappedStatements = 
+new StrictMap<MappedStatement>("Mapped Statements collection");
+```
+
+```java
+public MappedStatement getMappedStatement(String id, boolean validateIncompleteStatements)
+{
+	if (validateIncompleteStatements)
+	{
+		buildAllStatements();
+	}
+	return mappedStatements.get(id);
+}
+```
+
+**其实就是根据一个map映射，key就是定义mapping时候的id来拿到的；**
+
+至此，
+
+ 上述org.apache.ibatis.session.defaults.DefaultSqlSession类对象中的 selectList方法中的executor对象，
+
+在默认情况下，即没有设置settings的cache和executor属性时，默认使用的
+
+org.apache.ibatis.executor.CachingExecutor类
+
+```java
+作者：wuxinliulei
+链接：https://www.zhihu.com/question/25007334/answer/266187562
+来源：知乎
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+
+public Executor newExecutor(Transaction transaction, ExecutorType executorType, boolean autoCommit)
+{
+	        executorType = executorType == null ? defaultExecutorType : executorType;
+	        executorType = executorType == null ? ExecutorType.SIMPLE : executorType;
+		Executor executor;
+		if (ExecutorType.BATCH == executorType)
+		{
+			executor = new BatchExecutor(this, transaction);
+		}
+		else if (ExecutorType.REUSE == executorType)
+		{
+			executor = new ReuseExecutor(this, transaction);
+		}
+		else
+		{
+			executor = new SimpleExecutor(this, transaction);
+		}
+		if (cacheEnabled)
+		{
+			executor = new CachingExecutor(executor, autoCommit);
+		}
+		executor = (Executor) interceptorChain.pluginAll(executor);
+		return executor;
+}
+```
+
+ 所以调用到了
+
+```java
+public <E> List<E> query(MappedStatement ms, Object parameterObject, 
+                        RowBounds rowBounds, ResultHandler resultHandler)
+			throws SQLException
+{
+      BoundSql boundSql = ms.getBoundSql(parameterObject);
+      CacheKey key = createCacheKey(ms, parameterObject, rowBounds, boundSql);
+      return query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
+}
+```
+
+在真正查询时先查询cache，可以看到这个cache层级在MappedStatement上，也就是在单个Sql上；若查到，则直接返回，无则通过jdbc查询，且返回结果
+
+```java
+public <E> List<E> query(MappedStatement ms, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler,
+		CacheKey key, BoundSql boundSql) throws SQLException
+{
+	Cache cache = ms.getCache();
+	if (cache != null)
+	{
+		flushCacheIfRequired(ms);
+		if (ms.isUseCache() && resultHandler == null)
+		{
+			ensureNoOutParams(ms, key, parameterObject, boundSql);
+			if (!dirty)
+			{
+				cache.getReadWriteLock().readLock().lock();
+				try
+				{
+					@SuppressWarnings("unchecked")
+					List<E> cachedList = (List<E>) cache.getObject(key);
+					if (cachedList != null)
+						return cachedList;
+				}
+				finally
+				{
+					cache.getReadWriteLock().readLock().unlock();
+				}
+			}
+			List<E> list = delegate.<E> query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
+			tcm.putObject(cache, key, list); // issue #578. Query must be
+												// not synchronized to
+												// prevent deadlocks
+			return list;
+		}
+	}
+	return delegate.<E> query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
+}
+```
+
+上述的使用方式是未使用代理的方式，这样需要我们自行openSession并且关闭Session； 
+
+```java
+作者：wuxinliulei
+链接：https://www.zhihu.com/question/25007334/answer/266187562
+来源：知乎
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+
+SqlSession session = null;
+try
+{
+	session = sessionFactory.openSession();
+	/**
+	 * 映射sql的标识字符串， com.test.mapping.userMapper是userMapper.
+	 * xml文件中mapper标签的namespace属性的值，
+	 * getUser是select标签的id属性值，通过select标签的id属性值就可以找到要执行的SQL
+	 */
+	String statement = "com.test.mapping.userMapper.getUser";// 映射sql的标识字符串
+	// 执行查询返回一个唯一user对象的sql
+	User user = session.selectOne(statement, 1);
+	System.out.println(user);
+}
+catch (Exception e)
+{
+	// TODO: handle exception
+}
+finally
+{
+	if (session != null)
+	{
+		session.close();
+	}
+}
+```
+
+ 事实上如果我们使用SqlSessionManager来管理，那么开启和关闭Session操作都不用我们来处理了。
+
+```java
+final SqlSessionManager sqlSessionManager = SqlSessionManager.newInstance(sessionFactory);
+String statement = "com.test.mapping.userMapper.getUser";// 映射sql的标识字符串
+User user = sqlSessionManager.selectOne(statement, 1);
+System.out.println(user);
+```
+
+下面是Interceptor类实现，开启和关闭操作都交由了
+
+```java
+作者：wuxinliulei
+链接：https://www.zhihu.com/question/25007334/answer/266187562
+来源：知乎
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+
+private class SqlSessionInterceptor implements InvocationHandler
+{
+	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
+	{
+		final SqlSession sqlSession = SqlSessionManager.this.localSqlSession.get();
+		if (sqlSession != null)
+		{
+			try
+			{
+				return method.invoke(sqlSession, args);
+			}
+			catch (Throwable t)
+			{
+				throw ExceptionUtil.unwrapThrowable(t);
+			}
+		}
+		else
+		{
+			final SqlSession autoSqlSession = openSession();
+			try
+			{
+				final Object result = method.invoke(autoSqlSession, args);
+				autoSqlSession.commit();
+				return result;
+			}
+			catch (Throwable t)
+			{
+				autoSqlSession.rollback();
+				throw ExceptionUtil.unwrapThrowable(t);
+			}
+			finally
+			{
+				autoSqlSession.close();
+			}
+		}
+	}
+}
+
+```
+
+ 如果使用Mapper方式来操作SQL，就是利用动态代理，可以避免我们手写mapper的id字符串，将查找sql过程和执行sql过程放到了代理处理中，更优雅些，不过大体流程就是这些，改变了查找sql的步骤，通过Mapper的方法名来查找对应的sql的，
+
+ 具体可以参看：
+
+[Java 动态代理作用是什么?](https://zhstatic.zhihu.com/assets/zhihu/editor/zhihu-card-default.svg)
 
  
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+  
 
  
 
