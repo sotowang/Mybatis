@@ -462,9 +462,81 @@ private class SqlSessionInterceptor implements InvocationHandler
 
  
 
- 
+---
 
- 
+# Mybatis从入门到精通
+
+使用 XML 形式进行配置，首先在 src/main/resources 下面创建 mybatis-config.xml 配置文件，
+然后输入如下内容。
+
+```xml
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <setting name="logImpl" value="LOG4J"/>
+    </settings>
+    <typeAliases>
+        <package name="com.soto.study.model"/>
+    </typeAliases>
+
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"></transactionManager>
+            <dataSource type="UNPOOLED">
+                <property name="driver" value="com.mysql.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/mybatis"/>
+                <property name="username" value="root"/>
+                <property name="password" value="123456"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+
+    <mappers>
+        <mapper resource="com/soto/study/mapper/CountryMapper.xml"/>
+    </mappers>
+
+
+</configuration>
+```
+
+简单讲解一下这个配置。
+
+* <settings ＞ 中的 l ogimp l 属性配置指定使用 LOG4J 输出日志 。
+* <typeAliases ＞元素下面配置了 一个包的别名，通常确定一个类的时候需要使用类的全限定名称 ，例如 tk .mybatis .simple.model.Country。在 MyBatis 中需要频繁用到类的全限定名称，为了方便使用，我们配置了 tk .mybatis. simple .model 包，这样配置后，在使用类的时候不需要写包名的部分，只使用 Couηtry 即可。
+* <environments ＞环境 配置中 主要 配置了数据库连接，数据库的 url 为jdbc:mysql://localhost:3306/mybatis ，使用的是本机 MySQL 中的 mybatis数据库，后面的 username 和 password 分别是数据库的用户名和密码（如果你的数据库用户名及密码和这里的不一样，请修改为自己数据库可用的用户名和密码〉 。
+* <mappers ＞中配置了 一个包含完整类路径的 CountryMapper.xml ，这是一个 MyBatis 的SQL 语句和映射配置文件，这个 XML 文件会在后面的章节中介绍 。
+
+
+
+在 src/main/resources 下面创 建 tk/mybatis/simple/mapper 目录，再在该目录下面创建
+CountryMapper.xml 文件，添加如下内容 。
+
+ ```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.soto.study.mapper.CountryMapper">
+    <select id="selectAll" resultType="Country">
+		select id,countryname,countrycode from country
+	</select>
+</mapper>
+ ```
+
+SQL 定义在 CountryMapper.xml 文件中，里面的配置作用如下。
+
+
+* <mapper> : XML 的根元素 ， 属性 ηamespace 定义了当前 XML 的命名 空间。
+*  <select ＞元素：我们所定义的一个 SELECT 查询。
+* id 属性：定义了当前 SELECT 查询的唯一一个 id 。
+* resultType：定义了当前查询的返回值类型，此处就是指实体类 Country，前面配置中提到的别名主要用于这里，如果没有设置别名 ，此处就需要写成 resu ltType=”tk.mybatis . simple . model . Country ” 。
+* select id , ...： 查询 SQL 语句。
+
+创建好实体和 Mapper.xml 后 ， 接下来要有针对性地配置 Log4j ，让 MyBatis 在执行数据库
+操作的时候可以将执行的 SQL 和其他信息输出到控制台。
 
  
 

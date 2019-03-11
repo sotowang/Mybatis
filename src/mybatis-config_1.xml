@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <typeAliases>
+        <package name="com.soto.pojo"/>
+    </typeAliases>
+    <plugins>
+        <plugin interceptor="com.github.pagehelper.PageInterceptor"></plugin>
+    </plugins>
+    <environments default="development">
+        <environment id="development">
+            <!--事务管理-->
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/how2java?characterEncoding=UTF-8"/>
+                <property name="username" value="root"/>
+                <property name="password" value="123456"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <mappers>
+        <mapper resource="com/soto/pojo/Category.xml"/>
+        <!--<mapper resource="com/soto/pojo/OrderItem.xml"/>-->
+        <!--<mapper resource="com/soto/pojo/Order.xml"/>-->
+        <mapper resource="com/soto/pojo/Product.xml"/>
+        <mapper class="com.soto.mapper.CategoryMapper"/>
+        <mapper class="com.soto.mapper.ProductMapper"/>
+        <mapper class="com.soto.mapper.OrderItemMapper"/>
+        <mapper class="com.soto.mapper.OrderMapper"/>
+    </mappers>
+</configuration>
