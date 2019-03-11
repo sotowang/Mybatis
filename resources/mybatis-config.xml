@@ -24,7 +24,13 @@
 
 
     <mappers>
-        <mapper resource="com/soto/study/mapper/CountryMapper.xml"/>
+        <!--<mapper resource="com/soto/study/mapper/CountryMapper.xml"/>-->
+        <!--<mapper resource="com/soto/study/mapper/PrivilegeMapper.xml"/>-->
+        <!--<mapper resource="com/soto/study/mapper/RoleMapper.xml"/>-->
+        <!--<mapper resource="com/soto/study/mapper/RolePrivilegeMapper.xml"/>-->
+        <!--<mapper resource="com/soto/study/mapper/UserMapper.xml"/>-->
+        <!--<mapper resource="com/soto/study/mapper/UserRoleMapper.xml"/>-->
+        <package name="com.soto.study.mapper"></package>
     </mappers>
 
 

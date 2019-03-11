@@ -10,3 +10,64 @@ ALTER TABLE mybatis.country MODIFY COLUMN id int(11) NOT NULL AUTO_INCREMENT ;
 
 
 INSERT INTO `country` VALUES (1,'中国','CN'),(2,'美国','US'),(3,'俄罗斯','RU'),(4,'英国','GB'),(5,'法国','FR');
+
+
+CREATE TABLE mybatis.sys_user (
+	id bigint NOT NULL AUTO_INCREMENT COMMENT '用户id',
+	user_name varchar(50) NULL COMMENT '用户名',
+	user_password varchar(50) NULL COMMENT '密码',
+	user_email varchar(50) NULL COMMENT '邮箱',
+	user_info text NULL COMMENT '简介',
+	head_img blob NULL COMMENT '头像',
+	create_time datetime NULL COMMENT '创建时间',
+	PRIMARY KEY (id)
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8
+COLLATE=utf8_general_ci ;
+
+
+CREATE TABLE mybatis.sys_role (
+	id bigint NOT NULL AUTO_INCREMENT COMMENT '角色id',
+	role_name varchar(50) NULL COMMENT '角色名',
+	enabled int NULL COMMENT '有效标志',
+	create_by bigint NULL COMMENT '创建人',
+	create_time datetime NULL COMMENT '创建时间',
+	PRIMARY key (id)
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8
+COLLATE=utf8_general_ci
+COMMENT='角色表' ;
+
+
+CREATE TABLE mybatis.sys_privilege (
+	id BIGINT NOT NULL AUTO_INCREMENT COMMENT '权限id',
+	privilege_name varchar(50) NULL COMMENT '权限名称',
+	privilege_url varchar(200) NULL COMMENT '权限URL',
+	PRIMARY KEY (id)
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8
+COLLATE=utf8_general_ci
+COMMENT='权限表' ;
+
+
+CREATE TABLE mybatis.sys_user_role (
+	user_id BIGINT  COMMENT '用户ID',
+	role_id BIGINT COMMENT '角色ID'
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8
+COLLATE=utf8_general_ci
+COMMENT='用户角色关联表' ;
+
+
+CREATE TABLE mybatis.sys_role_privilege (
+	role_id BIGINT COMMENT '角色ID',
+	privilege_id BIGINT COMMENT '权限id'
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8
+COLLATE=utf8_general_ci
+COMMENT='角色权限关联表' ;

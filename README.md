@@ -540,7 +540,44 @@ SQL 定义在 CountryMapper.xml 文件中，里面的配置作用如下。
 
  
 
- 
+需要在 1.3.2 节中创建的
+mybati s-config.xml 配置文件中的 mappers 元素中配置所有的 mapper ，部分配置代码如下 。
+
+```xml
+<mappers>
+<mapper resource=” tk/mybatis/simple/mapper/CountryMapper.xml ” / >
+<mapper resource=” tk/mybatis/simple/mapper/UserMapper . xml ” / >
+<mapper resource=” tk/mybatis/simple/mapper/RoleMapper.xml ” />
+<mapper resource=” tk/mybatis/simple/mapper/PrivilegeMapper . xml ” />
+<mapper resource=” tk/mybatis/simple/mapper/UserRoleMapper . xml ” />
+<mapper resource=” tk/mybatis/simple/mapper / RolePrivilegeMapper.xml ” />
+</mappers>
+```
+
+ 这种配置方式需要将所有映射文件一一列举出来，如果增加了新的映射文件，还需要注意
+在此处进行配置，操作起来比较麻烦 。 因为此处所有的 XML 映射文件都有对应的 Mapper 接口，
+所以还有一种更简单的配置方式，代码如下 。
+
+```xml
+<mappers>
+<package name= ” tk.mybatis . simple . mapper ” />
+</mappers>
+
+```
+
+
+这种配置方式会先查找 tk.mybatis.simple . mapper 包下所有的接口，循环对接口进行
+如下操作。
+    I.  判断接口对应的命名 空 间是否己经存在，如果存在就抛出异常，不存在就继续进行接下
+来的操作。
+
+2. 加载接口对应的却也映射文件 ， 将接口全限定名转换为路径 ， 例如 ， 将接口
+  tk.mybat 工 S .s 工mple.mapper.UserMapper 转换为 tk/mybati s/simple/mapper/UserMapper.xml,
+  12J,.xm l 为后缀搜索 XML 资源，如果找到就解析 XML 。
+3. 处理接口中的注解方法。
+  因为这里的接口和 XML 映射文件完全符合上面操作的第 2 点，因此直接配置包名就能自
+  动扫描包下 的接口和 XML 映射文件，省去了很多麻烦 。 准备好这一切后就可 以开始学习具体
+  的用法了 。
 
  
 
