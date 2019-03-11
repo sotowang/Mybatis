@@ -581,13 +581,63 @@ mybati s-config.xml 配置文件中的 mappers 元素中配置所有的 mapper �
 
  
 
- 
+在对应的 UserMapper.xmJ 中添加如下的＜ select＞部分的代码。
+
+```sql
+<select id=” selectAll ” resultType=”t k.mybatis.simple.model . SysUser” >
+select id,
+user name userName,
+user password userPassword ,
+user email userEmail,
+user info userinfo ,
+head img headimg,
+create time createTime
+from sys user
+</select>
+```
+
+
+
+* 观察一下 UserMapper.xmJ 中 selectByid 和 selectAll 的区别 ：
+
+selectByid 中使用了 resultMap 来设置结果映射，而 selectAll 中则通过 result Type 直接指定了返回结果的型。可以发现，如果使用 result Type 来设置返回结果的类型，需要在 SQL 中为所有列名和属性名不一致的列设置别名，**通过设置别名使最终的查询结果列和 resultType 指定对象的属性名保持一致**，进而实现自动映射。 
 
  
 
- 
+* 名称映射规则
 
-  
+可以通过在 resultMap 中配直 property 属性和 column 属性的映射，或者在 SQL 中设置别名这两种方式实现将查询列映射到对象属性的目的 。property 属性或别名委和对象中属性的名字相同，但是实际匹配时， MyBatis 会先将两者都转换为 大写形式，然后再判断是否相同，即 property＝” userName ”和property=” username ”都可以匹配到对象的 userName 属性上 。判断是否相同的时候要使用 USERNAME,因此在设置 property 属性或别名的时候，**不需要考虑大小写是否一致，但是为了便于阅读，要尽可能按照统一的规则来设置** 
+
+  在数据库中，由于大多数数据库设置不区分大小写 ，因此下画线方式的命名很常见，如user name 、 user email 。在 Java 中， 一般都使用**驼峰式命名**，如 userName 、 userEmail 。因为数据库和 Java 中的这两种命名方式很常见，因此 MyBatis 还提供 了 一个全局属性**mapUnderscoreToCamelCase** ，通过配置这个属性为 true 可以自动将以下画线方式命名的
+数据库列映射到 Java 对象的驼峰式命名属性中。这个属性默认为 false ，如果想要使用该功能，
+需要在 MyBatis 的配置文件（第 l 章中 的 mybatis-config.xml 文件）中增加如下配置。
+
+```xml
+<settings>
+<setting name=” mapUnderscoreToCamelCase” value=”true ” />
+</settings>
+```
+
+
+使用上述配置的时候，前面的 selectAll 可以改写如下 。
+
+```sql
+<select id= ” selectAll ” resultType=” tk.mybatis.simple.model.SysUser” >
+select id,
+user name ,
+user password,
+user email ,
+user info,
+head img,
+create time
+from sys user
+</select>
+
+```
+
+
+**还可以将 SQL 简单写为 select * from sys user，但是考虑到性能，通常都会指定**
+**查询列，很少使用＊代替所有列。**
 
  
 

@@ -5,10 +5,12 @@
 <configuration>
     <settings>
         <setting name="logImpl" value="LOG4J"/>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
     </settings>
     <typeAliases>
         <package name="com.soto.study.model"/>
     </typeAliases>
+
 
     <environments default="development">
         <environment id="development">
@@ -24,7 +26,7 @@
 
 
     <mappers>
-        <!--<mapper resource="com/soto/study/mapper/CountryMapper.xml"/>-->
+        <mapper resource="com/soto/study/mapper/CountryMapper.xml"/>
         <!--<mapper resource="com/soto/study/mapper/PrivilegeMapper.xml"/>-->
         <!--<mapper resource="com/soto/study/mapper/RoleMapper.xml"/>-->
         <!--<mapper resource="com/soto/study/mapper/RolePrivilegeMapper.xml"/>-->
