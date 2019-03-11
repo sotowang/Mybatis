@@ -641,9 +641,72 @@ from sys user
 
  
 
- 
+## Mybatis代码生成器
 
- 
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd"
+        >
+
+<generatorConfiguration>
+
+    <context id="MySqlContext" targetRuntime="MyBatis3Simple" defaultModelType="flat">
+        <property name="beginningDelimiter" value="`"/>
+        <property name="endingDelimiter" value="`"/>
+        <property name="javaFileEncoding" value="UTF-8"/>
+
+        <commentGenerator>
+            <property name="suppressDate" value="true"/>
+            <property name="addRemarkComments" value="true"/>
+        </commentGenerator>
+
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="jdbc:mysql://localhost:3306/mybatis"
+                        userId="root"
+                        password="123456">
+        </jdbcConnection>
+
+        <javaModelGenerator targetPackage="com.soto.generator.model" targetProject="src">
+            <property name="trimStrings" value="true" />
+        </javaModelGenerator>
+
+        <sqlMapGenerator targetPackage="test.xml"  targetProject="resources"/>
+
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.soto.generator.dao"  targetProject="src"/>
+
+        <table tableName="%">
+            <generatedKey column="id" sqlStatement="MySql"/>
+        </table>
+    </context>
+</generatorConfiguration>
+```
+
+ 有关该配置有几点重要说明。
+
+1. context 属性 targetRunt ime 设置为 MyBatis3Simple ， 主要是为了避免生成与
+
+Exampl巳 相关的代码和方法 ， 如果需要 Example 相关的代码 ， 也可以设置为 MyBatis3 。
+
+2. context 属性 defau ltModelType 设置为 flat ，目的是使每个表只生成一个实体
+
+类 ， 当没有复杂的类继承时， 使用起来更方便。
+
+3. 因为此处使用的数据库为 MySQL ， 所以前后分隔符都设置为“ 、 ”。
+
+   4 .  注释生成器 commentGenerator 中配置了生成数据库的注释信息，并且禁止在注释中
+生成日期。
+
+5. jdbcConnection 简单地配置了要连接的数据源信息。
+6. javaModelGenerator 配置生成的包名为 test .model ，这个包名可 以根据自己代
+  码的规范进行修改， target Project 设置在 src\main\java 中。
+7. sqlMapGe口era tor 配置生成的 Mapper.xml 文件的位置，这里 的 targetProject 设
+  置为 src\main\resources ，没有放在 src\main\java 中。
+8. j avaClientGenerator 配置生成 Mapper 接口的位置，这里采用的 XMLMAPPER 类
+  型，接口和 XML 完全分离 。
+9. 最后的 table 使用通配符气”匹配数据库中所有的表，所有表都有主键自增的 id 字
+  段， sqlStatement 针对当前数据库配置 MySQL 。
 
  
 
